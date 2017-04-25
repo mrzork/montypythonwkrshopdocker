@@ -1,9 +1,25 @@
 FROM rocker/tidyverse
-MAINTAINER Steph Locke <steph@itsalocke.com>
+MAINTAINER Camilo Herrera <ch@camiloherrera.co>
+# system libraries of general use
+RUN apt-get update && apt-get install -y \
+    sudo \
+    pandoc \
+    pandoc-citeproc \
+    libcurl4-gnutls-dev \
+    libcairo2-dev \
+    libxt-dev \
+    libssl-dev \
+    libssh2-1-dev \
+    libssl1.0.0
+
+# system library dependency for the euler app
+RUN apt-get update && apt-get install -y \
+    libmpfr-dev
+
+# basic shiny functionality
+RUN R -e "install.packages(c('shiny', 'rmarkdown','tidyverse','lubridate','shinydashboard','ggplot2','ggvis','googleVis','rpivotTable','DT','xts','dygraphs','rpivotTable'), repos='https://cloud.r-project.org/')"
 RUN apt-get install libudunits2-0 libudunits2-dev whois
-RUN  R -e 'devtools::install_github("lockedata/TextAnalysis")' 
-RUN  R -e 'devtools::install_github("dgrtwo/widyr")' 
-ADD https://gist.githubusercontent.com/stephlocke/0036331e7a3338e965149833e92c1360/raw/607fb01602e143671c83216a4c5f1ad2deb10bf6/mkusers.sh /
-ADD https://gist.githubusercontent.com/stephlocke/0036331e7a3338e965149833e92c1360/raw/6d967c19d9c73cecd1e2d4da0eed2cd646790bd5/users.csv /
+ADD https://gist.githubusercontent.com/mrzork/dff40b85342c3f461ac9a9ed0da70ceb/raw/cae81c347bc209125d0d761e462d0381b47cb8d3/mkusers.sh /
+ADD https://gist.githubusercontent.com/mrzork/24c51d45e940b757bc71873f45129e84/raw/13b04aa5d49861104b6c9dbd8ef958004124b48d/users.csv /
 RUN chmod 777 /mkusers.sh
 RUN /mkusers.sh
